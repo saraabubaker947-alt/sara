@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>أمس أم الآن؟</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;900&display=swap">
+<style>
+:root{--bg:#fff7e8;--card:#fff;--ink:#3a2a10;--soft:#8a7350;--past:#3b5bb5;--pres:#e8890c;--ok:#2e9d62;--bad:#d6513f;--line:#f0d9a6;--on:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#241b0c;--card:#33270f;--ink:#fbeccd;--soft:#cfb98a;--past:#7f9bf0;--pres:#f5a43a;--line:#5a4519;--on:#1a1205}}
+:root[data-theme="dark"]{--bg:#241b0c;--card:#33270f;--ink:#fbeccd;--soft:#cfb98a;--past:#7f9bf0;--pres:#f5a43a;--line:#5a4519;--on:#1a1205}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:'Cairo',Tahoma,'Segoe UI',sans-serif;scroll-padding-top:env(safe-area-inset-top,0px)}
+main{max-width:620px;margin:0 auto;padding:16px}
+h1{font-size:2rem;font-weight:900;margin:6px 0}
+p{line-height:1.8;margin:6px 0}
+button{font-family:inherit;cursor:pointer;border:0;border-radius:14px}
+button:focus-visible{outline:3px solid var(--pres);outline-offset:2px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:18px;text-align:center}
+.go{background:var(--pres);color:var(--on);font-size:1.3rem;font-weight:700;padding:14px 32px;margin:14px 6px 0}
+.alt{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.line{display:flex;direction:ltr;margin:12px 0;border-radius:14px;overflow:hidden;font-weight:900;font-size:1.3rem}
+.line div{flex:1;padding:12px;color:var(--on)}
+.line .p{background:var(--past)}.line .n{background:var(--pres)}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.chip{background:transparent;color:var(--soft);border:2px solid var(--line);padding:8px 6px;font-size:1.05rem;font-weight:700}
+.chip small{display:block;direction:ltr;font-weight:500;font-size:.85rem}
+.chip.on{background:var(--pres);color:var(--on);border-color:var(--pres)}
+.hud{display:flex;justify-content:space-between;font-weight:700;margin-bottom:8px}
+.track{height:12px;background:var(--line);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.track div{height:100%;background:var(--pres);transition:width .3s}
+.prompt{color:var(--soft);font-size:1.05rem}
+.big-word{font-size:3.4rem;font-weight:900;line-height:1.5}
+.cue{font-size:2.6rem;font-weight:900}
+.cue.p{color:var(--past)}.cue.n{color:var(--pres)}
+.en{direction:ltr;color:var(--soft);font-size:1.15rem}
+.two{display:flex;direction:ltr;gap:12px;margin-top:14px}
+.two button{flex:1;color:var(--on);font-size:1.6rem;font-weight:900;padding:18px 6px}
+.two .p{background:var(--past)}.two .n{background:var(--pres)}
+.four{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.opt{background:var(--card);color:var(--ink);border:2px solid var(--line);font-size:1.7rem;font-weight:700;padding:14px 6px;min-height:72px}
+.right{background:var(--ok)!important;color:#fff!important;border-color:var(--ok)!important}
+.wrong{background:var(--bad)!important;color:#fff!important;border-color:var(--bad)!important;opacity:1!important}
+.tools{display:flex;gap:10px;justify-content:center;margin-top:10px}
+.tool{background:transparent;border:2px solid var(--line);color:var(--ink);padding:6px 14px;font-size:1rem}
+.msg{min-height:3.4em;margin-top:10px;font-weight:700;text-align:center;font-size:1.2rem;line-height:1.7}
+.review{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.review div{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px;font-size:1.25rem;font-weight:700}
+.review small{display:block;direction:ltr;color:var(--soft);font-weight:500}
+.hidden{display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<section id="start" class="card">
+<h1>أَمْسِ أَمِ الْآنَ؟</h1>
+<div class="line"><div class="p">⬅️ أَمْسِ (الماضي)</div><div class="n">الْآنَ (المضارع) ➡️</div></div>
+<p>💡 الفعل المضارع في أفعالنا يبدأ بحرف <b>الياء (يـ)</b>.</p>
+<p><b>اختر المستويات:</b></p>
+<div class="chips" id="chips"></div>
+<button class="go" id="go">ابدأ</button>
+</section>
+
+<section id="game" class="hidden">
+<div class="hud"><span id="count"></span><span id="score"></span></div>
+<div class="track"><div id="bar"></div></div>
+<div class="card">
+<div class="prompt" id="prompt"></div>
+<div id="stage"></div>
+<div class="tools">
+<button class="tool" id="say">🔊 اسمع</button>
+<button class="tool" id="help">💡 تلميح</button>
+</div>
+</div>
+<div id="answers"></div>
+<div class="msg" id="msg" aria-live="polite"></div>
+</section>
+
+<section id="end" class="card hidden">
+<div style="font-size:4.5rem" id="endEmoji">🏆</div>
+<h1 id="endTitle"></h1>
+<p id="endText"></p>
+<div class="review" id="review"></div>
+<button class="go" id="again">العب مرة أخرى</button>
+<button class="go alt" id="menu">غيّر المستوى</button>
+</section>
+</main>
+
+<script>
+const LV=[
+["يَدْخُلُ وَيَخْرُجُ","Enters & Exits",[["دَخَلَ","يَدْخُلُ","enter"],["خَرَجَ","يَخْرُجُ","exit"]]],
+["يَفْتَحُ وَيُغْلِقُ","Opens & Closes",[["فَتَحَ","يَفْتَحُ","open"],["أَغْلَقَ","يُغْلِقُ","close"]]],
+["يَأْكُلُ وَيَشْرَبُ","Eats & Drinks",[["أَكَلَ","يَأْكُلُ","eat"],["شَرِبَ","يَشْرَبُ","drink"]]],
+["يَذْهَبُ وَيَرْجِعُ","Goes & Returns",[["ذَهَبَ","يَذْهَبُ","go"],["رَجَعَ","يَرْجِعُ","return"]]],
+["يَكْتُبُ وَيَقْرَأُ","Writes & Reads",[["كَتَبَ","يَكْتُبُ","write"],["قَرَأَ","يَقْرَأُ","read"]]],
+["يَلْعَبُ وَيَرْكُضُ","Plays & Runs",[["لَعِبَ","يَلْعَبُ","play"],["رَكَضَ","يَرْكُضُ","run"]]],
+["يَنَامُ وَيَسْتَيْقِظُ","Sleeps & Wakes Up",[["نَامَ","يَنَامُ","sleep"],["اسْتَيْقَظَ","يَسْتَيْقِظُ","wake up"]]],
+["يَغْسِلُ وَيُنَظِّفُ","Washes & Cleans",[["غَسَلَ","يَغْسِلُ","wash"],["نَظَّفَ","يُنَظِّفُ","clean"]]]
+];
+const ALLV=LV.flatMap(l=>l[2].map(([p,n,e])=>({p,n,e})));
+const $=id=>document.getElementById(id);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const plain=w=>w.replace(/[\u064B-\u0652]/g,"");
+function speak(w){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(plain(w));u.lang="ar-SA";u.rate=.8;speechSynthesis.speak(u)}catch(e){}}
+
+const sel=new Set([0]);
+LV.forEach((l,i)=>{
+  const b=document.createElement("button");b.className="chip"+(i===0?" on":"");
+  b.innerHTML="المستوى "+(i+1)+"<br>"+l[0]+"<small>"+l[1]+"</small>";
+  b.onclick=()=>{if(sel.has(i)){if(sel.size>1){sel.delete(i);b.classList.remove("on")}}else{sel.add(i);b.classList.add("on")}};
+  $("chips").appendChild(b);
+});
+
+const N=10;
+let queue,q,asked,first,missed,locked;
+function show(id){["start","game","end"].forEach(s=>$(s).classList.toggle("hidden",s!==id))}
+function begin(){
+  const pool=shuffle([...sel].flatMap(i=>LV[i][2].map(([p,n,e])=>({p,n,e}))));
+  queue=[];
+  for(let i=0;i<N;i++)queue.push({v:pool[i%pool.length],t:i%2?"p":"n",tried:false});
+  queue=shuffle(queue);asked=0;first=0;missed=[];
+  show("game");next();
+}
+function hud(){
+  $("count").textContent="السؤال "+Math.min(asked+1,N)+" من "+N;
+  $("score").textContent="⭐ "+first;
+  $("bar").style.width=(asked/N*100)+"%";
+}
+function next(){
+  if(!queue.length)return finish();
+  hud();locked=false;q=queue.shift();$("msg").textContent="";
+  const v=q.v,A=$("answers");A.innerHTML="";
+  q.type=Math.random()<.5?"A":"B";
+  if(q.type==="A"){
+    $("prompt").textContent="هل حدث هذا أمس أم يحدث الآن؟";
+    $("stage").innerHTML='<div class="big-word">'+v[q.t]+'</div><div class="en">'+v.e+'</div>';
+    A.className="two";
+    [["p","أَمْسِ ⬅️"],["n","الْآنَ ➡️"]].forEach(([t,label])=>{
+      const b=document.createElement("button");b.className=t;b.textContent=label;
+      b.onclick=()=>check(b,t===q.t);b.dataset.ok=t===q.t?"1":"";A.appendChild(b);
+    });
+  }else{
+    $("prompt").textContent="اختر الفعل المناسب";
+    $("stage").innerHTML='<div class="cue '+q.t+'">'+(q.t==="p"?"أَمْسِ ⬅️":"الْآنَ ➡️")+'</div><div class="en">to '+v.e+'</div>';
+    const o=shuffle(ALLV.filter(x=>x!==v))[0];
+    const opts=shuffle([[v.p,"p",true],[v.n,"n",true],[o.p,"p",false],[o.n,"n",false]]);
+    A.className="four";
+    opts.forEach(([txt,t,same])=>{
+      const b=document.createElement("button");b.className="opt";b.textContent=txt;
+      const ok=same&&t===q.t;
+      b.onclick=()=>check(b,ok);b.dataset.ok=ok?"1":"";A.appendChild(b);
+    });
+  }
+}
+function check(btn,ok){
+  if(locked)return;locked=true;
+  const v=q.v;
+  [...$("answers").children].forEach(b=>{b.disabled=true;if(b.dataset.ok)b.classList.add("right")});
+  const pair=v.p+" ⬅️ | ➡️ "+v.n;
+  if(ok){
+    if(!q.tried)first++;
+    asked++;
+    $("msg").innerHTML="أحسنت! 🎉<br>"+pair;
+    speak(q.type==="A"?v[q.t]:v[q.t]);
+  }else{
+    btn.classList.add("wrong");
+    if(!missed.includes(v))missed.push(v);
+    if(!q.tried){q.tried=true;queue.splice(Math.min(2,queue.length),0,q)}else asked++;
+    $("msg").innerHTML="تذكّر: "+(q.t==="n"?"المضارع يبدأ بـ (يـ) ➡️ الآن":"الماضي لا يبدأ بـ (يـ) ⬅️ أمس")+"<br>"+pair;
+    speak(v[q.t]);
+  }
+  hud();setTimeout(next,ok?1400:2800);
+}
+function finish(){
+  asked=N;hud();show("end");
+  const all=missed.length===0;
+  $("endEmoji").textContent=all?"🏆":"🌱";
+  $("endTitle").textContent=all?"ممتاز! بلا أخطاء":"أحسنت! راجع هذه الأفعال";
+  $("endText").textContent="إجابات صحيحة من المحاولة الأولى: "+first+" من "+N;
+  $("review").innerHTML=missed.map(v=>'<div>'+v.p+' ⬅️<br>➡️ '+v.n+'<small>'+v.e+'</small></div>').join("");
+}
+$("go").onclick=begin;$("again").onclick=begin;$("menu").onclick=()=>show("start");
+$("say").onclick=()=>q&&speak(q.v[q.t]);
+$("help").onclick=()=>{$("msg").textContent="💡 المضارع يبدأ بالياء (يـ) ➡️ الآن"};
+</script>
+</body>
+</html>
